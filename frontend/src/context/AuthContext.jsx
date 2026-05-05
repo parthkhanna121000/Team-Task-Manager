@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = useCallback(async (email, password) => {
-    const { data } = await axiosClient.post('/api/auth/login', { email, password }); // ✅ fixed
+    const { data } = await axiosClient.post('/auth/login', { email, password });
     localStorage.setItem('ttm_token', data.token);
     localStorage.setItem('ttm_user', JSON.stringify(data.user));
     setUser(data.user);
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const register = useCallback(async (name, email, password) => {
-    const { data } = await axiosClient.post('/api/auth/register', { name, email, password }); // ✅ fixed
+    const { data } = await axiosClient.post('/auth/register', { name, email, password });
     localStorage.setItem('ttm_token', data.token);
     localStorage.setItem('ttm_user', JSON.stringify(data.user));
     setUser(data.user);
