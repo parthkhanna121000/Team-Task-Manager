@@ -10,9 +10,7 @@ export const useTasks = (projectId) => {
     if (!projectId) return;
     try {
       setLoading(true);
-      const { data } = await axiosClient.get(
-        `/api/projects/${projectId}/tasks`,
-      ); // ✅ fixed
+      const { data } = await axiosClient.get(`/projects/${projectId}/tasks`);
       setTasks(data.tasks);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to load tasks");
@@ -27,7 +25,7 @@ export const useTasks = (projectId) => {
 
   const createTask = async (payload) => {
     const { data } = await axiosClient.post(
-      `/api/projects/${projectId}/tasks`, // ✅ fixed
+      `/projects/${projectId}/tasks`,
       payload,
     );
     setTasks((prev) => [data.task, ...prev]);
@@ -36,7 +34,7 @@ export const useTasks = (projectId) => {
 
   const updateTask = async (taskId, payload) => {
     const { data } = await axiosClient.patch(
-      `/api/projects/${projectId}/tasks/${taskId}`, // ✅ fixed
+      `/projects/${projectId}/tasks/${taskId}`,
       payload,
     );
     setTasks((prev) => prev.map((t) => (t._id === taskId ? data.task : t)));
@@ -44,7 +42,7 @@ export const useTasks = (projectId) => {
   };
 
   const deleteTask = async (taskId) => {
-    await axiosClient.delete(`/api/projects/${projectId}/tasks/${taskId}`); // ✅ fixed
+    await axiosClient.delete(`/projects/${projectId}/tasks/${taskId}`);
     setTasks((prev) => prev.filter((t) => t._id !== taskId));
   };
 
@@ -58,7 +56,7 @@ export const useDashboard = (projectId) => {
   useEffect(() => {
     if (!projectId) return;
     axiosClient
-      .get(`/api/projects/${projectId}/dashboard`) // ✅ fixed
+      .get(`/projects/${projectId}/dashboard`)
       .then(({ data }) => setStats(data))
       .catch(() => toast.error("Failed to load dashboard"))
       .finally(() => setLoading(false));

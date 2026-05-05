@@ -9,7 +9,7 @@ export const useProjects = () => {
   const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axiosClient.get("/api/projects");
+      const { data } = await axiosClient.get("/projects");
       setProjects(data.projects);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to load projects");
@@ -23,7 +23,7 @@ export const useProjects = () => {
   }, [fetchProjects]);
 
   const createProject = async (payload) => {
-    const { data } = await axiosClient.post("/api/projects", payload);
+    const { data } = await axiosClient.post("/projects", payload);
     setProjects((prev) => [data.project, ...prev]);
     return data.project;
   };
@@ -39,7 +39,7 @@ export const useProject = (projectId) => {
   const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axiosClient.get(`/api/projects/${projectId}`);
+      const { data } = await axiosClient.get(`/projects/${projectId}`);
       setProject(data.project);
       setRole(data.role);
     } catch (err) {
@@ -54,18 +54,15 @@ export const useProject = (projectId) => {
   }, [fetchProject]);
 
   const addMember = async (email) => {
-    const { data } = await axiosClient.post(
-      `/api/projects/${projectId}/members`,
-      {
-        email,
-      },
-    );
+    const { data } = await axiosClient.post(`/projects/${projectId}/members`, {
+      email,
+    });
     setProject(data.project);
   };
 
   const removeMember = async (userId) => {
     const { data } = await axiosClient.delete(
-      `/api/projects/${projectId}/members/${userId}`,
+      `/projects/${projectId}/members/${userId}`,
     );
     setProject(data.project);
   };

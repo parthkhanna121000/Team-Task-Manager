@@ -59,7 +59,7 @@ const ProjectDetailPage = () => {
   const handleDeleteProject = async () => {
     if (!confirm(`Delete project "${project.name}"? This cannot be undone.`)) return;
     try {
-      await axiosClient.delete(`/api/projects/${projectId}`);
+      await axiosClient.delete(`/projects/${projectId}`);
       toast.success('Project deleted');
       navigate('/projects');
     } catch (err) {
