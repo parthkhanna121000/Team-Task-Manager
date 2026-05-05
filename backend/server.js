@@ -14,12 +14,21 @@ const app = express();
 
 app.use(
   cors({
-    origin: [process.env.CLIENT_ORIGIN, "http://localhost:5173"],
+    origin: function (origin, callback) {
+      const allowed = [process.env.CLIENT_ORIGIN, "http://localhost:5173"];
+      if (!origin || allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+app.options("*", cors()); // handle preflight
 
 app.use(express.json());
 
