@@ -8,52 +8,48 @@ const DashboardPage = () => {
   const { projectId } = useParams();
   const { project, loading: projLoading } = useProject(projectId);
   const { stats, loading: statsLoading } = useDashboard(projectId);
-
   const loading = projLoading || statsLoading;
 
+  const pct = (val, total) =>
+    total > 0 ? Math.round((val / total) * 100) : 0;
+
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+    <div className="page">
       <Navbar />
-      <main className="wrap">
+      <main className="container">
+
         {/* Breadcrumb */}
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 20 }}>
           <Link
             to={`/projects/${projectId}`}
             style={{
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 11,
-              color: 'var(--txt-3)',
-              letterSpacing: '0.04em',
-              transition: 'color 120ms',
+              fontSize: 13,
+              color: 'var(--text-2)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+              transition: 'color 150ms',
             }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--amber-text)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--txt-3)'}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--text-0)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-2)'}
           >
-            ← board
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Back to board
           </Link>
         </div>
 
         {/* Header */}
-        <div style={{
-          marginBottom: 26,
-          paddingBottom: 18,
-          borderBottom: '1px solid var(--border)',
-        }}>
-          <p style={{
-            fontFamily: 'IBM Plex Mono, monospace',
-            fontSize: 10,
-            color: 'var(--txt-3)',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            marginBottom: 4,
-          }}>
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 4 }}>
             {project?.name}
           </p>
           <h1 style={{
             fontSize: 20,
             fontWeight: 600,
-            color: 'var(--txt)',
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.03em',
+            color: 'var(--text-0)',
           }}>
             Dashboard
           </h1>
@@ -62,43 +58,43 @@ const DashboardPage = () => {
         {loading ? (
           <div className="loading"><div className="spinner" /></div>
         ) : stats ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-            {/* Overview stats */}
+            {/* Stats row */}
             <section>
               <p style={{
-                fontFamily: 'IBM Plex Mono, monospace',
-                fontSize: 10,
-                color: 'var(--txt-3)',
-                letterSpacing: '0.1em',
+                fontSize: 11,
+                fontWeight: 500,
+                color: 'var(--text-3)',
+                letterSpacing: '0.06em',
                 textTransform: 'uppercase',
                 marginBottom: 12,
               }}>
-                overview
+                Overview
               </p>
-              <div className="stats-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: 10,
-              }}>
-                <StatCard label="Total" value={stats.total} accent="var(--txt-2)" />
+              <div className="stats-row">
+                <StatCard
+                  label="Total tasks"
+                  value={stats.total}
+                  accent="var(--text-1)"
+                />
                 <StatCard
                   label="To do"
                   value={stats.byStatus.todo}
-                  sub={pct(stats.byStatus.todo, stats.total)}
-                  accent="var(--txt-3)"
+                  sub={`${pct(stats.byStatus.todo, stats.total)}% of total`}
+                  accent="var(--text-2)"
                 />
                 <StatCard
                   label="In progress"
                   value={stats.byStatus.in_progress}
-                  sub={pct(stats.byStatus.in_progress, stats.total)}
-                  accent="var(--teal)"
+                  sub={`${pct(stats.byStatus.in_progress, stats.total)}% of total`}
+                  accent="var(--info)"
                 />
                 <StatCard
-                  label="Done"
+                  label="Completed"
                   value={stats.byStatus.done}
-                  sub={pct(stats.byStatus.done, stats.total)}
-                  accent="var(--green)"
+                  sub={`${pct(stats.byStatus.done, stats.total)}% of total`}
+                  accent="var(--success)"
                 />
               </div>
             </section>
@@ -106,66 +102,81 @@ const DashboardPage = () => {
             {/* Overdue */}
             <section>
               <p style={{
-                fontFamily: 'IBM Plex Mono, monospace',
-                fontSize: 10,
-                color: 'var(--txt-3)',
-                letterSpacing: '0.1em',
+                fontSize: 11,
+                fontWeight: 500,
+                color: 'var(--text-3)',
+                letterSpacing: '0.06em',
                 textTransform: 'uppercase',
                 marginBottom: 12,
               }}>
-                attention
+                Attention needed
               </p>
-              <div style={{ maxWidth: 220 }}>
+              <div style={{ maxWidth: 240 }}>
                 <StatCard
-                  label="Overdue"
+                  label="Overdue tasks"
                   value={stats.overdue}
-                  sub={stats.overdue > 0 ? 'needs attention' : 'all on track'}
-                  accent={stats.overdue > 0 ? 'var(--red)' : 'var(--green)'}
+                  sub={stats.overdue > 0 ? 'Requires immediate action' : 'Everything is on schedule'}
+                  accent={stats.overdue > 0 ? 'var(--danger)' : 'var(--success)'}
                 />
               </div>
             </section>
 
-            {/* Per-member breakdown */}
+            {/* Per-member */}
             {stats.byUser.length > 0 && (
               <section>
                 <p style={{
-                  fontFamily: 'IBM Plex Mono, monospace',
-                  fontSize: 10,
-                  color: 'var(--txt-3)',
-                  letterSpacing: '0.1em',
+                  fontSize: 11,
+                  fontWeight: 500,
+                  color: 'var(--text-3)',
+                  letterSpacing: '0.06em',
                   textTransform: 'uppercase',
                   marginBottom: 12,
                 }}>
-                  by member
+                  Team progress
                 </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 8,
+                  maxWidth: 640,
+                }}>
                   {stats.byUser.map((entry) => {
                     const percent = entry.count > 0
                       ? Math.round((entry.done / entry.count) * 100)
                       : 0;
+                    const barColor = percent === 100
+                      ? 'var(--success)'
+                      : percent > 60
+                      ? 'var(--info)'
+                      : percent > 30
+                      ? 'var(--warning)'
+                      : 'var(--danger)';
+
                     return (
                       <div
                         key={entry._id}
                         style={{
-                          background: 'var(--bg-2)',
-                          border: '1px solid var(--border)',
-                          borderRadius: 'var(--radius-lg)',
+                          background: 'var(--surface-1)',
+                          border: '1px solid var(--border-0)',
+                          borderRadius: 'var(--r-lg)',
                           padding: '14px 18px',
+                          transition: 'border-color 200ms',
                         }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border-1)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-0)'}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           <div style={{
-                            width: 30,
-                            height: 30,
+                            width: 32,
+                            height: 32,
                             borderRadius: '50%',
-                            background: 'var(--bg-4)',
+                            background: `hsl(${(entry.name.charCodeAt(0) * 20) % 360}, 55%, 25%)`,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: 'var(--txt-2)',
-                            fontFamily: 'IBM Plex Mono, monospace',
+                            fontSize: 12,
+                            fontWeight: 700,
+                            color: `hsl(${(entry.name.charCodeAt(0) * 20) % 360}, 70%, 72%)`,
                             flexShrink: 0,
                           }}>
                             {entry.name[0].toUpperCase()}
@@ -175,50 +186,51 @@ const DashboardPage = () => {
                             <div style={{
                               display: 'flex',
                               justifyContent: 'space-between',
-                              alignItems: 'baseline',
-                              marginBottom: 7,
+                              alignItems: 'center',
+                              marginBottom: 8,
                             }}>
-                              <span style={{ fontSize: 13, fontWeight: 500 }}>{entry.name}</span>
                               <span style={{
-                                fontSize: 11,
-                                color: 'var(--txt-3)',
-                                fontFamily: 'IBM Plex Mono, monospace',
+                                fontSize: 13,
+                                fontWeight: 500,
+                                color: 'var(--text-0)',
+                                letterSpacing: '-0.01em',
                               }}>
-                                {entry.done}/{entry.count}
+                                {entry.name}
                               </span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                <span style={{
+                                  fontSize: 12,
+                                  color: 'var(--text-2)',
+                                }}>
+                                  {entry.done}/{entry.count} tasks
+                                </span>
+                                <span style={{
+                                  fontSize: 13,
+                                  fontWeight: 600,
+                                  color: barColor,
+                                  fontFamily: 'JetBrains Mono, monospace',
+                                  letterSpacing: '-0.02em',
+                                }}>
+                                  {percent}%
+                                </span>
+                              </div>
                             </div>
 
-                            {/* Progress track */}
                             <div style={{
                               height: 4,
-                              background: 'var(--bg-4)',
-                              borderRadius: 2,
+                              background: 'var(--surface-4)',
+                              borderRadius: 100,
                               overflow: 'hidden',
                             }}>
                               <div style={{
                                 height: '100%',
                                 width: `${percent}%`,
-                                background: percent === 100
-                                  ? 'var(--green)'
-                                  : percent > 50
-                                  ? 'var(--teal)'
-                                  : 'var(--amber)',
-                                borderRadius: 2,
-                                transition: 'width 0.5s ease',
+                                background: barColor,
+                                borderRadius: 100,
+                                transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)',
                               }} />
                             </div>
                           </div>
-
-                          <span style={{
-                            fontFamily: 'IBM Plex Mono, monospace',
-                            fontSize: 14,
-                            fontWeight: 500,
-                            color: percent === 100 ? 'var(--green)' : 'var(--txt-2)',
-                            minWidth: 36,
-                            textAlign: 'right',
-                          }}>
-                            {percent}%
-                          </span>
                         </div>
                       </div>
                     );
@@ -229,7 +241,8 @@ const DashboardPage = () => {
 
             {stats.byUser.length === 0 && (
               <div className="empty">
-                <p>No tasks assigned yet.</p>
+                <p>No tasks assigned yet</p>
+                <span>Assign tasks to team members to see progress here.</span>
               </div>
             )}
           </div>
@@ -240,8 +253,5 @@ const DashboardPage = () => {
     </div>
   );
 };
-
-const pct = (val, total) =>
-  total > 0 ? `${Math.round((val / total) * 100)}%` : '0%';
 
 export default DashboardPage;

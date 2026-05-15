@@ -18,97 +18,96 @@ const Navbar = () => {
     .slice(0, 2);
 
   return (
-    <header style={{
-      background: 'var(--bg-2)',
-      borderBottom: '1px solid var(--border)',
+    <header className="glass" style={{
       position: 'sticky',
       top: 0,
-      zIndex: 50,
+      zIndex: 100,
+      borderBottom: '1px solid var(--border-0)',
+      borderTop: 'none',
+      borderLeft: 'none',
+      borderRight: 'none',
     }}>
       <nav style={{
-        maxWidth: 1160,
+        maxWidth: 1180,
         margin: '0 auto',
-        padding: '0 20px',
-        height: 52,
+        padding: '0 24px',
+        height: 56,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-        {/* Logo — text only, styled like a dev's personal project */}
-        <Link to="/projects" style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          <span style={{
-            fontFamily: 'IBM Plex Mono, monospace',
-            fontSize: 15,
-            fontWeight: 500,
-            color: 'var(--amber-text)',
-            letterSpacing: '-0.02em',
+        {/* Wordmark */}
+        <Link to="/projects" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 26,
+            height: 26,
+            borderRadius: 7,
+            background: 'linear-gradient(135deg, var(--brand), #7c8ff8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 12px var(--brand-glow)',
           }}>
-            ttm
-          </span>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <rect x="1" y="1" width="4.5" height="4.5" rx="1" fill="white" />
+              <rect x="7.5" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.5" />
+              <rect x="1" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.5" />
+              <rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="white" />
+            </svg>
+          </div>
           <span style={{
-            fontFamily: 'IBM Plex Mono, monospace',
-            fontSize: 15,
-            fontWeight: 400,
-            color: 'var(--txt-3)',
-            marginLeft: 2,
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'var(--text-0)',
+            letterSpacing: '-0.03em',
           }}>
-            /
-          </span>
-          <span style={{
-            fontFamily: 'IBM Plex Sans, sans-serif',
-            fontSize: 13,
-            fontWeight: 400,
-            color: 'var(--txt-2)',
-            marginLeft: 6,
-            letterSpacing: 0,
-          }}>
-            Team Task Manager
+            TaskFlow
           </span>
         </Link>
 
         {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {/* User info */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 9,
+              padding: '5px 12px 5px 6px',
+              borderRadius: 100,
+              background: 'var(--surface-3)',
+              border: '1px solid var(--border-1)',
+            }}>
               <div style={{
-                width: 28,
-                height: 28,
+                width: 26,
+                height: 26,
                 borderRadius: '50%',
-                background: 'var(--amber-dim)',
-                border: '1px solid rgba(217,119,6,0.3)',
+                background: 'linear-gradient(135deg, var(--brand), #7c8ff8)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 11,
-                fontWeight: 600,
-                color: 'var(--amber-text)',
-                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 10,
+                fontWeight: 700,
+                color: '#fff',
+                letterSpacing: '0.02em',
+                flexShrink: 0,
               }}>
                 {initials}
               </div>
               <span style={{
-                color: 'var(--txt-2)',
                 fontSize: 13,
-                fontFamily: 'IBM Plex Sans, sans-serif',
+                color: 'var(--text-1)',
+                fontWeight: 500,
               }}>
-                {user.name}
+                {user.name.split(' ')[0]}
               </span>
             </div>
 
-            <div style={{ width: 1, height: 16, background: 'var(--border-2)' }} />
-
             <button
               onClick={handleLogout}
-              style={{
-                fontSize: 12,
-                color: 'var(--txt-3)',
-                fontFamily: 'IBM Plex Mono, monospace',
-                padding: '4px 0',
-                transition: 'color 120ms',
-              }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--txt)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--txt-3)'}
+              className="btn btn-ghost btn-sm"
+              style={{ fontSize: 12.5 }}
             >
-              sign out
+              Sign out
             </button>
           </div>
         )}

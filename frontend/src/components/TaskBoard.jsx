@@ -1,9 +1,24 @@
 import TaskCard from './TaskCard';
 
 const COLUMNS = [
-  { key: 'todo', label: 'To Do', mono: 'todo', borderColor: 'var(--border-2)' },
-  { key: 'in_progress', label: 'In Progress', mono: 'in_progress', borderColor: 'var(--teal)' },
-  { key: 'done', label: 'Done', mono: 'done', borderColor: 'var(--green)' },
+  {
+    key: 'todo',
+    label: 'To Do',
+    color: 'var(--text-2)',
+    accent: 'var(--surface-5)',
+  },
+  {
+    key: 'in_progress',
+    label: 'In Progress',
+    color: 'var(--info)',
+    accent: 'var(--info-dim)',
+  },
+  {
+    key: 'done',
+    label: 'Done',
+    color: 'var(--success)',
+    accent: 'var(--success-dim)',
+  },
 ];
 
 const TaskBoard = ({ tasks, role, currentUserId, onUpdateStatus, onDelete, onEdit }) => {
@@ -13,59 +28,60 @@ const TaskBoard = ({ tasks, role, currentUserId, onUpdateStatus, onDelete, onEdi
   }, {});
 
   return (
-    <div className="kanban" style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
-      gap: 16,
-    }}>
+    <div className="kanban">
       {COLUMNS.map((col) => (
-        <div key={col.key}>
+        <div key={col.key} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {/* Column header */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            marginBottom: 12,
-            paddingBottom: 10,
-            borderBottom: `1px solid ${col.borderColor}`,
+            justifyContent: 'space-between',
+            padding: '10px 14px',
+            background: col.accent,
+            borderRadius: 'var(--r-md)',
+            border: '1px solid var(--border-0)',
           }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{
+                width: 7,
+                height: 7,
+                borderRadius: '50%',
+                background: col.color,
+                boxShadow: `0 0 5px ${col.color}`,
+              }} />
+              <span style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: col.color,
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
+              }}>
+                {col.label}
+              </span>
+            </div>
             <span style={{
-              fontFamily: 'IBM Plex Mono, monospace',
               fontSize: 11,
-              fontWeight: 500,
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              color: col.borderColor === 'var(--border-2)' ? 'var(--txt-3)' : col.borderColor,
-            }}>
-              {col.label}
-            </span>
-            <span style={{
-              marginLeft: 'auto',
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 11,
-              color: 'var(--txt-3)',
-              background: 'var(--bg-3)',
-              padding: '1px 8px',
-              borderRadius: 2,
-              border: '1px solid var(--border)',
+              fontWeight: 600,
+              fontFamily: 'JetBrains Mono, monospace',
+              color: col.color,
+              opacity: 0.7,
             }}>
               {grouped[col.key].length}
             </span>
           </div>
 
-          {/* Cards */}
+          {/* Task cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {grouped[col.key].length === 0 ? (
               <div style={{
-                border: '1px dashed var(--border)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '20px',
+                border: '1px dashed var(--border-1)',
+                borderRadius: 'var(--r-lg)',
+                padding: '24px 16px',
                 textAlign: 'center',
-                color: 'var(--txt-3)',
-                fontSize: 12,
-                fontFamily: 'IBM Plex Mono, monospace',
+                color: 'var(--text-3)',
+                fontSize: 13,
               }}>
-                empty
+                No tasks
               </div>
             ) : (
               grouped[col.key].map((task) => (
