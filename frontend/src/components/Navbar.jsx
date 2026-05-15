@@ -36,38 +36,69 @@ const Navbar = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-        {/* Wordmark */}
-        <Link to="/projects" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+
+        {/* ── Logo + Wordmark ── */}
+        <Link to="/projects" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+
+          {/* Icon mark */}
           <div style={{
-            width: 26,
-            height: 26,
-            borderRadius: 7,
-            background: 'linear-gradient(135deg, var(--brand), #7c8ff8)',
+            width: 30,
+            height: 30,
+            borderRadius: 8,
+            background: '#3C3489',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 12px var(--brand-glow)',
+            flexShrink: 0,
           }}>
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <rect x="1" y="1" width="4.5" height="4.5" rx="1" fill="white" />
-              <rect x="7.5" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.5" />
-              <rect x="1" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.5" />
-              <rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="white" />
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+              {/* Top-left: completed task */}
+              <rect x="1" y="1" width="6" height="6" rx="1.5" fill="#AFA9EC"/>
+              <path d="M2.5 4.5l1.5 1.5L7 3" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              {/* Top-right: in-progress task */}
+              <rect x="9" y="1" width="6" height="6" rx="1.5" fill="none" stroke="#AFA9EC" strokeWidth="1"/>
+              <rect x="10" y="3" width="4" height="1.5" rx="0.75" fill="#AFA9EC"/>
+              <rect x="10" y="5" width="2.5" height="1.5" rx="0.75" fill="#AFA9EC" opacity="0.5"/>
+              {/* Bottom-left: in-progress task */}
+              <rect x="1" y="9" width="6" height="6" rx="1.5" fill="none" stroke="#AFA9EC" strokeWidth="1"/>
+              <rect x="2" y="11" width="4" height="1.5" rx="0.75" fill="#AFA9EC"/>
+              <rect x="2" y="13" width="2.5" height="1.5" rx="0.75" fill="#AFA9EC" opacity="0.5"/>
+              {/* Bottom-right: team dots */}
+              <rect x="9" y="9" width="6" height="6" rx="1.5" fill="#534AB7" opacity="0.7"/>
+              <circle cx="11.2" cy="12" r="1.4" fill="#EEEDFE"/>
+              <circle cx="13.8" cy="12" r="1.4" fill="#EEEDFE"/>
             </svg>
           </div>
-          <span style={{
-            fontSize: 14,
-            fontWeight: 600,
-            color: 'var(--text-0)',
-            letterSpacing: '-0.03em',
-          }}>
-            TaskFlow
-          </span>
+
+          {/* Two-line wordmark */}
+          <div style={{ lineHeight: 1, userSelect: 'none' }}>
+            <span style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--text-0)',
+              letterSpacing: '-0.03em',
+              display: 'block',
+            }}>
+              Team Task
+            </span>
+            <span style={{
+              fontSize: 10,
+              fontWeight: 500,
+              color: '#7F77DD',
+              letterSpacing: '-0.01em',
+              display: 'block',
+              marginTop: 1,
+            }}>
+              Manager
+            </span>
+          </div>
         </Link>
 
+        {/* ── User area ── */}
         {user && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {/* User info */}
+
+            {/* User pill */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -81,7 +112,7 @@ const Navbar = () => {
                 width: 26,
                 height: 26,
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, var(--brand), #7c8ff8)',
+                background: 'linear-gradient(135deg, #534AB7, #7F77DD)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
