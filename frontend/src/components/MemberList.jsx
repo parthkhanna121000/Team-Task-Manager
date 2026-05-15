@@ -11,7 +11,9 @@ const MemberList = ({ project, role, onAddMember, onRemoveMember }) => {
   const handleAdd = async () => {
     if (!email.trim()) return;
     const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!emailRegex.test(email.trim())) return toast.error('Invalid email address');
+    if (!emailRegex.test(email.trim())) {
+      return toast.error('Invalid email address');
+    }
     setAdding(true);
     try {
       await onAddMember(email.trim());
@@ -45,55 +47,66 @@ const MemberList = ({ project, role, onAddMember, onRemoveMember }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: 14,
       }}>
-        <p style={{ fontSize: 13, color: 'var(--text-2)' }}>
+        <p style={{
+          fontFamily: 'IBM Plex Mono, monospace',
+          fontSize: 11,
+          color: 'var(--txt-3)',
+          letterSpacing: '0.06em',
+        }}>
           {project.members.length} member{project.members.length !== 1 ? 's' : ''}
         </p>
         {role === 'admin' && (
           <button
-            className="btn btn-primary btn-sm"
+            className="btn btn-ghost btn-sm"
+            style={{ fontFamily: 'IBM Plex Mono, monospace' }}
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? 'Cancel' : '+ Invite member'}
+            {showForm ? 'cancel' : '+ add member'}
           </button>
         )}
       </div>
 
-      {/* Invite form */}
+      {/* Add form */}
       {showForm && (
         <div style={{
-          background: 'var(--surface-2)',
-          border: '1px solid var(--border-1)',
-          borderRadius: 'var(--r-lg)',
-          padding: '16px',
-          marginBottom: 16,
+          background: 'var(--bg-2)',
+          border: '1px solid var(--border-2)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '14px 16px',
+          marginBottom: 12,
         }}>
-          <p style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 10 }}>
-            Enter the email address of an existing user to invite them.
+          <p style={{
+            fontSize: 11,
+            color: 'var(--txt-3)',
+            marginBottom: 10,
+            fontFamily: 'IBM Plex Mono, monospace',
+          }}>
+            enter a registered user's email
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
             <input
               type="email"
-              placeholder="colleague@company.com"
+              placeholder="member@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+              style={{ flex: 1 }}
               autoFocus
             />
             <button
-              className="btn btn-primary btn-sm"
+              className="btn btn-amber btn-sm"
               onClick={handleAdd}
               disabled={adding}
-              style={{ flexShrink: 0 }}
             >
-              {adding ? '...' : 'Invite'}
+              {adding ? '...' : 'add'}
             </button>
           </div>
         </div>
       )}
 
-      {/* Members */}
+      {/* Member list */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {project.members.map((m) => (
           <div
@@ -102,96 +115,77 @@ const MemberList = ({ project, role, onAddMember, onRemoveMember }) => {
               display: 'flex',
               alignItems: 'center',
               gap: 12,
-              padding: '12px 16px',
-              background: 'var(--surface-1)',
-              borderRadius: 'var(--r-lg)',
-              border: '1px solid var(--border-0)',
-              transition: 'border-color 200ms',
+              padding: '10px 14px',
+              background: 'var(--bg-2)',
+              borderRadius: 'var(--radius)',
+              border: '1px solid var(--border)',
             }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border-1)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-0)'}
           >
-            {/* Avatar */}
             <div style={{
-              width: 34,
-              height: 34,
+              width: 30,
+              height: 30,
               borderRadius: '50%',
-              background: `hsl(${(m.user.name.charCodeAt(0) * 20) % 360}, 55%, 25%)`,
+              background: m.role === 'admin' ? 'var(--amber-dim)' : 'var(--bg-4)',
+              border: `1px solid ${m.role === 'admin' ? 'rgba(217,119,6,0.25)' : 'var(--border)'}`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 12,
-              fontWeight: 700,
-              color: `hsl(${(m.user.name.charCodeAt(0) * 20) % 360}, 70%, 72%)`,
+              fontSize: 11,
+              fontWeight: 600,
+              color: m.role === 'admin' ? 'var(--amber-text)' : 'var(--txt-3)',
+              fontFamily: 'IBM Plex Mono, monospace',
               flexShrink: 0,
             }}>
               {initials(m.user.name)}
             </div>
 
-            {/* Info */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{
-                fontSize: 13.5,
-                fontWeight: 500,
-                color: 'var(--text-0)',
-                letterSpacing: '-0.01em',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-              }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--txt)' }}>
                 {m.user.name}
                 {m.user._id === user?._id && (
                   <span style={{
+                    color: 'var(--txt-3)',
                     fontSize: 11,
-                    color: 'var(--text-3)',
-                    fontWeight: 400,
+                    marginLeft: 6,
+                    fontFamily: 'IBM Plex Mono, monospace',
                   }}>
                     (you)
                   </span>
                 )}
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 1 }}>
+              <div style={{
+                fontSize: 11,
+                color: 'var(--txt-3)',
+                fontFamily: 'IBM Plex Mono, monospace',
+              }}>
                 {m.user.email}
               </div>
             </div>
 
-            {/* Role badge */}
             <span style={{
-              fontSize: 11,
-              fontWeight: 500,
-              padding: '3px 9px',
-              borderRadius: 100,
-              background: m.role === 'admin' ? 'var(--brand-dim)' : 'var(--surface-4)',
-              color: m.role === 'admin' ? 'var(--brand)' : 'var(--text-2)',
-              border: `1px solid ${m.role === 'admin' ? 'rgba(79,110,247,0.2)' : 'var(--border-1)'}`,
+              fontFamily: 'IBM Plex Mono, monospace',
+              fontSize: 10,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: m.role === 'admin' ? 'var(--amber-text)' : 'var(--txt-3)',
             }}>
               {m.role}
             </span>
 
-            {/* Remove */}
             {role === 'admin' && m.user._id !== user?._id && m.user._id !== project.owner && (
               <button
                 onClick={() => handleRemove(m.user._id, m.user.name)}
                 style={{
-                  width: 26,
-                  height: 26,
-                  borderRadius: 'var(--r-sm)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--text-3)',
-                  fontSize: 16,
-                  transition: 'all 150ms',
-                  background: 'transparent',
+                  color: 'var(--txt-3)',
+                  fontSize: 15,
+                  padding: '2px 6px',
+                  borderRadius: 'var(--radius)',
+                  transition: 'color 120ms',
+                  fontFamily: 'IBM Plex Mono, monospace',
+                  lineHeight: 1,
                 }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--danger)';
-                  e.currentTarget.style.background = 'var(--danger-dim)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = 'var(--text-3)';
-                  e.currentTarget.style.background = 'transparent';
-                }}
+                onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--txt-3)'}
               >
                 ×
               </button>

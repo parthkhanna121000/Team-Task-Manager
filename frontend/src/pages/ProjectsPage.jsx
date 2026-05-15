@@ -35,38 +35,41 @@ const ProjectsPage = () => {
     project.members.find((m) => m.user._id === user?._id)?.role;
 
   return (
-    <div className="page">
+    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <Navbar />
-      <main className="container">
 
-        {/* Header */}
+      <main className="wrap">
+        {/* Page header */}
         <div style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-end',
           justifyContent: 'space-between',
-          marginBottom: 32,
+          marginBottom: 28,
+          paddingBottom: 20,
+          borderBottom: '1px solid var(--border)',
         }}>
           <div>
-            <h1 style={{
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '-0.03em',
-              color: 'var(--text-0)',
-              marginBottom: 4,
+            <p style={{
+              fontFamily: 'IBM Plex Mono, monospace',
+              fontSize: 10,
+              color: 'var(--txt-3)',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              marginBottom: 6,
             }}>
-              Projects
-            </h1>
-            <p style={{ fontSize: 13, color: 'var(--text-2)' }}>
-              {projects.length > 0
-                ? `${projects.length} project${projects.length !== 1 ? 's' : ''}`
-                : 'No projects yet'}
+              {projects.length} project{projects.length !== 1 ? 's' : ''}
             </p>
+            <h1 style={{
+              fontSize: 22,
+              fontWeight: 600,
+              letterSpacing: '-0.02em',
+              color: 'var(--txt)',
+            }}>
+              Your projects
+            </h1>
           </div>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            New project
+          <button className="btn btn-amber" onClick={() => setShowModal(true)}>
+            + New project
           </button>
         </div>
 
@@ -75,141 +78,133 @@ const ProjectsPage = () => {
           <div className="loading"><div className="spinner" /></div>
         ) : projects.length === 0 ? (
           <div className="empty">
-            <svg className="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <path d="M9 12h6M12 9v6" />
-            </svg>
-            <p>Create your first project</p>
-            <span>Invite your team and start tracking tasks together.</span>
+            <p style={{ color: 'var(--txt-3)', fontFamily: 'IBM Plex Mono, monospace', fontSize: 12 }}>
+              no projects yet
+            </p>
+            <p style={{ marginTop: 6, fontSize: 13, color: 'var(--txt-3)' }}>
+              Create one to get started.
+            </p>
           </div>
         ) : (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: 16,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: 14,
           }}>
-            {projects.map((project, i) => {
+            {projects.map((project) => {
               const role = userRole(project);
               return (
                 <Link key={project._id} to={`/projects/${project._id}`}>
                   <div
-                    className="card card-hover"
+                    className="card"
                     style={{
-                      animationDelay: `${i * 40}ms`,
-                      height: '100%',
                       cursor: 'pointer',
+                      transition: 'border-color 120ms',
+                      height: '100%',
+                      position: 'relative',
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--border-2)'}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
                   >
-                    {/* Top bar */}
+                    {/* Role indicator — left border */}
                     <div style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      justifyContent: 'space-between',
-                      gap: 12,
-                      marginBottom: 14,
-                    }}>
+                      position: 'absolute',
+                      top: 16,
+                      bottom: 16,
+                      left: 0,
+                      width: 3,
+                      borderRadius: '0 2px 2px 0',
+                      background: role === 'admin' ? 'var(--amber)' : 'var(--bg-4)',
+                    }} />
+
+                    <div style={{ paddingLeft: 10 }}>
                       <div style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 10,
-                        background: `hsl(${(project.name.charCodeAt(0) * 15) % 360}, 60%, 25%)`,
-                        border: `1px solid hsl(${(project.name.charCodeAt(0) * 15) % 360}, 60%, 35%)`,
                         display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 15,
-                        fontWeight: 700,
-                        color: `hsl(${(project.name.charCodeAt(0) * 15) % 360}, 80%, 75%)`,
-                        flexShrink: 0,
+                        alignItems: 'flex-start',
+                        justifyContent: 'space-between',
+                        gap: 10,
+                        marginBottom: 8,
                       }}>
-                        {project.name[0].toUpperCase()}
+                        <h3 style={{
+                          fontSize: 15,
+                          fontWeight: 600,
+                          color: 'var(--txt)',
+                          letterSpacing: '-0.01em',
+                          lineHeight: 1.3,
+                        }}>
+                          {project.name}
+                        </h3>
+                        <span style={{
+                          fontFamily: 'IBM Plex Mono, monospace',
+                          fontSize: 10,
+                          letterSpacing: '0.06em',
+                          textTransform: 'uppercase',
+                          color: role === 'admin' ? 'var(--amber-text)' : 'var(--txt-3)',
+                          flexShrink: 0,
+                          marginTop: 2,
+                        }}>
+                          {role}
+                        </span>
                       </div>
 
-                      <span style={{
-                        fontSize: 11,
-                        fontWeight: 500,
-                        padding: '3px 9px',
-                        borderRadius: 100,
-                        background: role === 'admin' ? 'var(--brand-dim)' : 'var(--surface-4)',
-                        color: role === 'admin' ? 'var(--brand)' : 'var(--text-2)',
-                        border: `1px solid ${role === 'admin' ? 'rgba(79,110,247,0.2)' : 'var(--border-1)'}`,
-                        letterSpacing: '-0.01em',
+                      {project.description && (
+                        <p style={{
+                          color: 'var(--txt-3)',
+                          fontSize: 12,
+                          lineHeight: 1.5,
+                          marginBottom: 14,
+                        }}>
+                          {project.description.length > 75
+                            ? project.description.slice(0, 75) + '...'
+                            : project.description}
+                        </p>
+                      )}
+
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginTop: project.description ? 0 : 14,
+                        paddingTop: 12,
+                        borderTop: '1px solid var(--border)',
                       }}>
-                        {role}
-                      </span>
-                    </div>
-
-                    <h3 style={{
-                      fontSize: 15,
-                      fontWeight: 600,
-                      color: 'var(--text-0)',
-                      letterSpacing: '-0.02em',
-                      marginBottom: 6,
-                      lineHeight: 1.3,
-                    }}>
-                      {project.name}
-                    </h3>
-
-                    {project.description && (
-                      <p style={{
-                        fontSize: 13,
-                        color: 'var(--text-2)',
-                        lineHeight: 1.5,
-                        marginBottom: 16,
-                      }}>
-                        {project.description.length > 80
-                          ? project.description.slice(0, 80) + '...'
-                          : project.description}
-                      </p>
-                    )}
-
-                    {/* Footer */}
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginTop: 'auto',
-                      paddingTop: 14,
-                      borderTop: '1px solid var(--border-0)',
-                    }}>
-                      {/* Avatars */}
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {project.members.slice(0, 4).map((m, idx) => (
-                          <div
-                            key={m.user._id}
-                            title={m.user.name}
-                            style={{
-                              width: 24,
-                              height: 24,
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                          {project.members.slice(0, 4).map((m, i) => (
+                            <div key={m.user._id} style={{
+                              width: 22,
+                              height: 22,
                               borderRadius: '50%',
-                              background: `hsl(${(m.user.name.charCodeAt(0) * 20) % 360}, 55%, 30%)`,
-                              border: '2px solid var(--surface-1)',
+                              background: 'var(--bg-4)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontSize: 9,
-                              fontWeight: 700,
-                              color: `hsl(${(m.user.name.charCodeAt(0) * 20) % 360}, 70%, 75%)`,
-                              marginLeft: idx > 0 ? -7 : 0,
-                              position: 'relative',
-                              zIndex: 4 - idx,
-                            }}
-                          >
-                            {m.user.name[0].toUpperCase()}
-                          </div>
-                        ))}
+                              fontWeight: 600,
+                              color: 'var(--txt-2)',
+                              fontFamily: 'IBM Plex Mono, monospace',
+                              marginLeft: i > 0 ? -6 : 0,
+                              border: '1.5px solid var(--bg-2)',
+                            }}>
+                              {m.user.name[0].toUpperCase()}
+                            </div>
+                          ))}
+                          <span style={{
+                            fontSize: 11,
+                            color: 'var(--txt-3)',
+                            marginLeft: 6,
+                            fontFamily: 'IBM Plex Mono, monospace',
+                          }}>
+                            {project.members.length}
+                          </span>
+                        </div>
                         <span style={{
-                          fontSize: 12,
-                          color: 'var(--text-2)',
-                          marginLeft: 8,
+                          fontSize: 11,
+                          color: 'var(--txt-3)',
+                          fontFamily: 'IBM Plex Mono, monospace',
                         }}>
-                          {project.members.length} member{project.members.length !== 1 ? 's' : ''}
+                          {format(new Date(project.createdAt), 'MMM d')}
                         </span>
                       </div>
-
-                      <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
-                        {format(new Date(project.createdAt), 'MMM d')}
-                      </span>
                     </div>
                   </div>
                 </Link>
@@ -221,15 +216,15 @@ const ProjectsPage = () => {
 
       {/* Create modal */}
       {showModal && (
-        <div className="overlay animate-fade-in" onClick={(e) => e.target === e.currentTarget && setShowModal(false)}>
-          <div className="modal animate-fade-up">
+        <div className="overlay" onClick={(e) => e.target === e.currentTarget && setShowModal(false)}>
+          <div className="modal">
             <div className="modal-head">
               <span className="modal-title">New project</span>
               <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
             </div>
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div className="field">
-                <label>Project name</label>
+                <label>Name *</label>
                 <input
                   value={form.name}
                   onChange={set('name')}
@@ -238,7 +233,7 @@ const ProjectsPage = () => {
                 />
               </div>
               <div className="field">
-                <label>Description <span style={{ color: 'var(--text-3)' }}>(optional)</span></label>
+                <label>Description</label>
                 <textarea
                   value={form.description}
                   onChange={set('description')}
@@ -247,19 +242,19 @@ const ProjectsPage = () => {
                   style={{ resize: 'vertical' }}
                 />
               </div>
-              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+              <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
                 <button
                   type="button"
                   className="btn btn-ghost"
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, justifyContent: 'center' }}
                   onClick={() => setShowModal(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-primary"
-                  style={{ flex: 1 }}
+                  className="btn btn-amber"
+                  style={{ flex: 1, justifyContent: 'center' }}
                   disabled={creating}
                 >
                   {creating ? 'Creating...' : 'Create project'}
