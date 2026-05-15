@@ -1,7 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#111010"/>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle"
-    font-family="monospace" font-size="13" font-weight="600" fill="#d97706">
-    ttm
-  </text>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="32" height="32" rx="7" fill="#3C3489"/>
+
+  <!-- Top-left: completed task (checkmark) -->
+  <rect x="3" y="3" width="11" height="11" rx="2.5" fill="#AFA9EC"/>
+  <path d="M5.5 8.5l3 3L13 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Top-right: in-progress task (lines) -->
+  <rect x="18" y="3" width="11" height="11" rx="2.5" fill="none" stroke="#AFA9EC" stroke-width="1.5"/>
+  <rect x="20.5" y="7" width="6" height="2" rx="1" fill="#AFA9EC"/>
+  <rect x="20.5" y="10.5" width="4" height="2" rx="1" fill="#AFA9EC" opacity="0.5"/>
+
+  <!-- Bottom-left: in-progress task (lines) -->
+  <rect x="3" y="18" width="11" height="11" rx="2.5" fill="none" stroke="#AFA9EC" stroke-width="1.5"/>
+  <rect x="5.5" y="22" width="6" height="2" rx="1" fill="#AFA9EC"/>
+  <rect x="5.5" y="25.5" width="4" height="2" rx="1" fill="#AFA9EC" opacity="0.5"/>
+
+  <!-- Bottom-right: team dots -->
+  <rect x="18" y="18" width="11" height="11" rx="2.5" fill="#534AB7" opacity="0.8"/>
+  <circle cx="22" cy="23.5" r="2.5" fill="#EEEDFE"/>
+  <circle cx="27" cy="23.5" r="2.5" fill="#EEEDFE"/>
 </svg>
