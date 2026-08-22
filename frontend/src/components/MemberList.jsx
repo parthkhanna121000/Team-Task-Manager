@@ -19,7 +19,7 @@ const MemberList = ({ project, role, onAddMember, onRemoveMember }) => {
       await onAddMember(email.trim());
       setEmail('');
       setShowForm(false);
-      toast.success('Member added');
+      toast.success('Member added successfully!');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add member');
     } finally {
@@ -41,157 +41,222 @@ const MemberList = ({ project, role, onAddMember, onRemoveMember }) => {
     name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
-    <div style={{ maxWidth: 560 }}>
-      {/* Header */}
+    <div style={{ maxWidth: '640px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      
+      {/* Header Bar */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 14,
+        marginBottom: '20px',
       }}>
         <p style={{
-          fontFamily: 'IBM Plex Mono, monospace',
-          fontSize: 11,
-          color: 'var(--txt-3)',
-          letterSpacing: '0.06em',
+          fontSize: '12px',
+          fontWeight: '700',
+          color: '#64748b',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          margin: 0,
         }}>
-          {project.members.length} member{project.members.length !== 1 ? 's' : ''}
+          {project.members.length} member{project.members.length !== 1 ? 's' : ''} on team
         </p>
         {role === 'admin' && (
           <button
-            className="btn btn-ghost btn-sm"
-            style={{ fontFamily: 'IBM Plex Mono, monospace' }}
             onClick={() => setShowForm(!showForm)}
+            style={{
+              padding: '8px 16px',
+              background: showForm ? '#e2e8f0' : 'rgba(99, 102, 241, 0.1)',
+              color: showForm ? '#475569' : '#6366f1',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '12px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
           >
-            {showForm ? 'cancel' : '+ add member'}
+            {showForm ? 'Cancel' : '+ Add Member'}
           </button>
         )}
       </div>
 
-      {/* Add form */}
+      {/* Add Member Form Drawer */}
       {showForm && (
         <div style={{
-          background: 'var(--bg-2)',
-          border: '1px solid var(--border-2)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '14px 16px',
-          marginBottom: 12,
+          background: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          borderRadius: '20px',
+          padding: '20px',
+          marginBottom: '20px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)',
         }}>
           <p style={{
-            fontSize: 11,
-            color: 'var(--txt-3)',
-            marginBottom: 10,
-            fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: '12px',
+            color: '#64748b',
+            marginBottom: '10px',
+            fontWeight: '600',
           }}>
-            enter a registered user's email
+            Enter a registered user's email address to invite them:
           </p>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: '10px' }}>
             <input
               type="email"
-              placeholder="member@email.com"
+              placeholder="member@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-              style={{ flex: 1 }}
+              style={{
+                flex: 1,
+                padding: '12px 16px',
+                backgroundColor: '#f8fafc',
+                border: '1px solid #cbd5e1',
+                borderRadius: '14px',
+                fontSize: '14px',
+                color: '#0f172a',
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
               autoFocus
             />
             <button
-              className="btn btn-amber btn-sm"
               onClick={handleAdd}
               disabled={adding}
+              style={{
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '14px',
+                fontSize: '13px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 8px 16px rgba(15, 23, 42, 0.15)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
             >
-              {adding ? '...' : 'add'}
+              {adding ? 'Adding...' : 'Invite'}
             </button>
           </div>
         </div>
       )}
 
-      {/* Member list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {project.members.map((m) => (
-          <div
-            key={m.user._id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: '10px 14px',
-              background: 'var(--bg-2)',
-              borderRadius: 'var(--radius)',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <div style={{
-              width: 30,
-              height: 30,
-              borderRadius: '50%',
-              background: m.role === 'admin' ? 'var(--amber-dim)' : 'var(--bg-4)',
-              border: `1px solid ${m.role === 'admin' ? 'rgba(217,119,6,0.25)' : 'var(--border)'}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 11,
-              fontWeight: 600,
-              color: m.role === 'admin' ? 'var(--amber-text)' : 'var(--txt-3)',
-              fontFamily: 'IBM Plex Mono, monospace',
-              flexShrink: 0,
-            }}>
-              {initials(m.user.name)}
-            </div>
+      {/* Member List Cards */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {project.members.map((m) => {
+          const isAdmin = m.role === 'admin';
+          const isCurrentUser = m.user._id === user?._id;
 
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--txt)' }}>
-                {m.user.name}
-                {m.user._id === user?._id && (
-                  <span style={{
-                    color: 'var(--txt-3)',
-                    fontSize: 11,
-                    marginLeft: 6,
-                    fontFamily: 'IBM Plex Mono, monospace',
-                  }}>
-                    (you)
-                  </span>
-                )}
-              </div>
+          return (
+            <div
+              key={m.user._id}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                padding: '16px 20px',
+                background: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.9)',
+                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)'}
+            >
+              {/* Avatar Initials Badge */}
               <div style={{
-                fontSize: 11,
-                color: 'var(--txt-3)',
-                fontFamily: 'IBM Plex Mono, monospace',
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                background: isAdmin
+                  ? 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)'
+                  : 'linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: '700',
+                color: '#ffffff',
+                flexShrink: 0,
+                boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
               }}>
-                {m.user.email}
+                {initials(m.user.name)}
               </div>
+
+              {/* Name and Email */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {m.user.name}
+                  {isCurrentUser && (
+                    <span style={{
+                      fontSize: '10px',
+                      fontWeight: '700',
+                      color: '#6366f1',
+                      background: 'rgba(99, 102, 241, 0.1)',
+                      padding: '2px 8px',
+                      borderRadius: '9999px',
+                    }}>
+                      You
+                    </span>
+                  )}
+                </div>
+                <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', marginTop: '2px' }}>
+                  {m.user.email}
+                </div>
+              </div>
+
+              {/* Role Badge */}
+              <span style={{
+                fontSize: '10px',
+                fontWeight: '700',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                padding: '4px 10px',
+                borderRadius: '9999px',
+                background: isAdmin ? 'rgba(99, 102, 241, 0.1)' : 'rgba(226, 232, 240, 0.8)',
+                color: isAdmin ? '#6366f1' : '#64748b',
+              }}>
+                {m.role}
+              </span>
+
+              {/* Remove Action for Admin */}
+              {role === 'admin' && !isCurrentUser && m.user._id !== project.owner && (
+                <button
+                  onClick={() => handleRemove(m.user._id, m.user.name)}
+                  title="Remove member"
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#94a3b8',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    width: '30px',
+                    height: '30px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                    e.currentTarget.style.color = '#ef4444';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#94a3b8';
+                  }}
+                >
+                  ×
+                </button>
+              )}
             </div>
-
-            <span style={{
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 10,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: m.role === 'admin' ? 'var(--amber-text)' : 'var(--txt-3)',
-            }}>
-              {m.role}
-            </span>
-
-            {role === 'admin' && m.user._id !== user?._id && m.user._id !== project.owner && (
-              <button
-                onClick={() => handleRemove(m.user._id, m.user.name)}
-                style={{
-                  color: 'var(--txt-3)',
-                  fontSize: 15,
-                  padding: '2px 6px',
-                  borderRadius: 'var(--radius)',
-                  transition: 'color 120ms',
-                  fontFamily: 'IBM Plex Mono, monospace',
-                  lineHeight: 1,
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = '#f87171'}
-                onMouseLeave={e => e.currentTarget.style.color = 'var(--txt-3)'}
-              >
-                ×
-              </button>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

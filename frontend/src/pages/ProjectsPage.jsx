@@ -23,7 +23,7 @@ const ProjectsPage = () => {
       await createProject(form);
       setForm({ name: '', description: '' });
       setShowModal(false);
-      toast.success('Project created');
+      toast.success('Project created successfully!');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create project');
     } finally {
@@ -35,127 +35,208 @@ const ProjectsPage = () => {
     project.members.find((m) => m.user._id === user?._id)?.role;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
+      position: 'relative',
+      overflowX: 'hidden',
+    }}>
+      {/* Background Glowing Ambient Orbs */}
+      <div style={{
+        position: 'absolute',
+        top: '-10%',
+        left: '-5%',
+        width: '500px',
+        height: '500px',
+        background: 'rgba(255, 154, 201, 0.35)',
+        borderRadius: '50%',
+        filter: 'blur(90px)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '-10%',
+        right: '-5%',
+        width: '500px',
+        height: '500px',
+        background: 'rgba(116, 235, 213, 0.35)',
+        borderRadius: '50%',
+        filter: 'blur(90px)',
+        pointerEvents: 'none',
+      }} />
+
       <Navbar />
 
-      <main className="wrap">
-        {/* Page header */}
+      <main className="wrap" style={{ position: 'relative', zIndex: 1, paddingBottom: '60px' }}>
+        
+        {/* Page Header with Glassmorphism Card */}
         <div style={{
+          background: 'rgba(255, 255, 255, 0.75)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '24px',
+          padding: '24px 32px',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.04)',
           display: 'flex',
-          alignItems: 'flex-end',
+          alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 28,
-          paddingBottom: 20,
-          borderBottom: '1px solid var(--border)',
+          marginBottom: 32,
         }}>
           <div>
             <p style={{
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: 10,
-              color: 'var(--txt-3)',
-              letterSpacing: '0.1em',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              fontSize: '11px',
+              fontWeight: '700',
+              color: '#64748b',
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              marginBottom: 6,
+              marginBottom: '6px',
             }}>
-              {projects.length} project{projects.length !== 1 ? 's' : ''}
+              {projects.length} project{projects.length !== 1 ? 's' : ''} available
             </p>
             <h1 style={{
-              fontSize: 22,
-              fontWeight: 600,
-              letterSpacing: '-0.02em',
-              color: 'var(--txt)',
+              fontSize: '28px',
+              fontWeight: '800',
+              color: '#0f172a',
+              letterSpacing: '-0.03em',
+              margin: 0,
             }}>
-              Your projects
+              Your Projects
             </h1>
           </div>
-          <button className="btn btn-amber" onClick={() => setShowModal(true)}>
-            + New project
+
+          <button
+            onClick={() => setShowModal(true)}
+            style={{
+              padding: '12px 24px',
+              background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '16px',
+              fontSize: '14px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              boxShadow: '0 10px 20px rgba(15, 23, 42, 0.2)',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            + New Project
           </button>
         </div>
 
-        {/* Grid */}
+        {/* Grid Container */}
         {loading ? (
-          <div className="loading"><div className="spinner" /></div>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
+            <div className="spinner" style={{ width: '40px', height: '40px', border: '4px solid rgba(255,255,255,0.4)', borderTopColor: '#0f172a', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          </div>
         ) : projects.length === 0 ? (
-          <div className="empty">
-            <p style={{ color: 'var(--txt-3)', fontFamily: 'IBM Plex Mono, monospace', fontSize: 12 }}>
-              no projects yet
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.6)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            padding: '60px',
+            textAlign: 'center',
+            border: '1px solid rgba(255, 255, 255, 0.8)',
+          }}>
+            <p style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 8px 0' }}>
+              No projects yet
             </p>
-            <p style={{ marginTop: 6, fontSize: 13, color: 'var(--txt-3)' }}>
-              Create one to get started.
+            <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
+              Create your first project to get started collaborating.
             </p>
           </div>
         ) : (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: 14,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: 20,
           }}>
             {projects.map((project) => {
               const role = userRole(project);
+              const isAdmin = role === 'admin';
               return (
-                <Link key={project._id} to={`/projects/${project._id}`}>
+                <Link key={project._id} to={`/projects/${project._id}`} style={{ textDecoration: 'none' }}>
                   <div
-                    className="card"
                     style={{
+                      background: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(20px)',
+                      border: '1px solid rgba(255, 255, 255, 0.9)',
+                      borderRadius: '24px',
+                      padding: '24px',
+                      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)',
                       cursor: 'pointer',
-                      transition: 'border-color 120ms',
+                      transition: 'all 0.25s ease',
                       height: '100%',
                       position: 'relative',
+                      overflow: 'hidden',
+                      boxSizing: 'border-box',
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--border-2)'}
-                    onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.06)';
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.03)';
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.8)';
+                    }}
                   >
-                    {/* Role indicator — left border */}
+                    {/* Left indicator accent border */}
                     <div style={{
                       position: 'absolute',
-                      top: 16,
-                      bottom: 16,
+                      top: 0,
+                      bottom: 0,
                       left: 0,
-                      width: 3,
-                      borderRadius: '0 2px 2px 0',
-                      background: role === 'admin' ? 'var(--amber)' : 'var(--bg-4)',
+                      width: 4,
+                      background: isAdmin ? 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)' : '#cbd5e1',
                     }} />
 
-                    <div style={{ paddingLeft: 10 }}>
+                    <div style={{ paddingLeft: 8 }}>
                       <div style={{
                         display: 'flex',
                         alignItems: 'flex-start',
                         justifyContent: 'space-between',
-                        gap: 10,
-                        marginBottom: 8,
+                        gap: 12,
+                        marginBottom: 10,
                       }}>
                         <h3 style={{
-                          fontSize: 15,
-                          fontWeight: 600,
-                          color: 'var(--txt)',
-                          letterSpacing: '-0.01em',
-                          lineHeight: 1.3,
+                          fontSize: '17px',
+                          fontWeight: '800',
+                          color: '#0f172a',
+                          letterSpacing: '-0.02em',
+                          margin: 0,
+                          lineHeight: '1.4',
                         }}>
                           {project.name}
                         </h3>
                         <span style={{
-                          fontFamily: 'IBM Plex Mono, monospace',
-                          fontSize: 10,
-                          letterSpacing: '0.06em',
+                          fontSize: '10px',
+                          fontWeight: '700',
+                          letterSpacing: '0.08em',
                           textTransform: 'uppercase',
-                          color: role === 'admin' ? 'var(--amber-text)' : 'var(--txt-3)',
+                          padding: '4px 10px',
+                          borderRadius: '9999px',
+                          background: isAdmin ? 'rgba(99, 102, 241, 0.1)' : 'rgba(226, 232, 240, 0.8)',
+                          color: isAdmin ? '#6366f1' : '#64748b',
                           flexShrink: 0,
-                          marginTop: 2,
                         }}>
-                          {role}
+                          {role || 'member'}
                         </span>
                       </div>
 
                       {project.description && (
                         <p style={{
-                          color: 'var(--txt-3)',
-                          fontSize: 12,
-                          lineHeight: 1.5,
-                          marginBottom: 14,
+                          color: '#64748b',
+                          fontSize: '13px',
+                          lineHeight: '1.6',
+                          margin: '0 0 20px 0',
+                          fontWeight: '500',
                         }}>
-                          {project.description.length > 75
-                            ? project.description.slice(0, 75) + '...'
+                          {project.description.length > 80
+                            ? project.description.slice(0, 80) + '...'
                             : project.description}
                         </p>
                       )}
@@ -164,45 +245,46 @@ const ProjectsPage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginTop: project.description ? 0 : 14,
-                        paddingTop: 12,
-                        borderTop: '1px solid var(--border)',
+                        marginTop: project.description ? 0 : 20,
+                        paddingTop: 14,
+                        borderTop: '1px solid rgba(226, 232, 240, 0.8)',
                       }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           {project.members.slice(0, 4).map((m, i) => (
                             <div key={m.user._id} style={{
-                              width: 22,
-                              height: 22,
+                              width: 26,
+                              height: 26,
                               borderRadius: '50%',
-                              background: 'var(--bg-4)',
+                              background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              fontSize: 9,
-                              fontWeight: 600,
-                              color: 'var(--txt-2)',
-                              fontFamily: 'IBM Plex Mono, monospace',
-                              marginLeft: i > 0 ? -6 : 0,
-                              border: '1.5px solid var(--bg-2)',
+                              fontSize: 10,
+                              fontWeight: 700,
+                              color: '#ffffff',
+                              marginLeft: i > 0 ? -8 : 0,
+                              border: '2px solid #ffffff',
+                              boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
                             }}>
                               {m.user.name[0].toUpperCase()}
                             </div>
                           ))}
                           <span style={{
-                            fontSize: 11,
-                            color: 'var(--txt-3)',
-                            marginLeft: 6,
-                            fontFamily: 'IBM Plex Mono, monospace',
+                            fontSize: '12px',
+                            color: '#64748b',
+                            marginLeft: 10,
+                            fontWeight: '600',
                           }}>
-                            {project.members.length}
+                            {project.members.length} member{project.members.length !== 1 ? 's' : ''}
                           </span>
                         </div>
+
                         <span style={{
-                          fontSize: 11,
-                          color: 'var(--txt-3)',
-                          fontFamily: 'IBM Plex Mono, monospace',
+                          fontSize: '12px',
+                          color: '#94a3b8',
+                          fontWeight: '600',
                         }}>
-                          {format(new Date(project.createdAt), 'MMM d')}
+                          {format(new Date(project.createdAt), 'MMM d, yyyy')}
                         </span>
                       </div>
                     </div>
@@ -214,50 +296,148 @@ const ProjectsPage = () => {
         )}
       </main>
 
-      {/* Create modal */}
+      {/* Create Modal with Glassmorphism */}
       {showModal && (
-        <div className="overlay" onClick={(e) => e.target === e.currentTarget && setShowModal(false)}>
-          <div className="modal">
-            <div className="modal-head">
-              <span className="modal-title">New project</span>
-              <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
+        <div
+          onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.4)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            zIndex: 50,
+          }}
+        >
+          <div style={{
+            width: '100%',
+            maxWidth: '440px',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(25px)',
+            borderRadius: '28px',
+            padding: '32px',
+            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
+            border: '1px solid rgba(255, 255, 255, 1)',
+            boxSizing: 'border-box',
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '24px',
+            }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                Create New Project
+              </h2>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{
+                  background: '#f1f5f9',
+                  border: 'none',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  color: '#64748b',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                ×
+              </button>
             </div>
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="field">
-                <label>Name *</label>
+
+            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#475569', marginBottom: '8px' }}>
+                  Project Name *
+                </label>
                 <input
                   value={form.name}
                   onChange={set('name')}
                   placeholder="e.g. Q4 Marketing Campaign"
+                  required
                   autoFocus
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    backgroundColor: '#f8fafc',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '16px',
+                    fontSize: '14px',
+                    color: '#0f172a',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
                 />
               </div>
-              <div className="field">
-                <label>Description</label>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#475569', marginBottom: '8px' }}>
+                  Description
+                </label>
                 <textarea
                   value={form.description}
                   onChange={set('description')}
                   placeholder="What is this project about?"
                   rows={3}
-                  style={{ resize: 'vertical' }}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    backgroundColor: '#f8fafc',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '16px',
+                    fontSize: '14px',
+                    color: '#0f172a',
+                    outline: 'none',
+                    resize: 'vertical',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                  }}
                 />
               </div>
-              <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button
                   type="button"
-                  className="btn btn-ghost"
-                  style={{ flex: 1, justifyContent: 'center' }}
                   onClick={() => setShowModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: '14px',
+                    background: '#f1f5f9',
+                    color: '#475569',
+                    border: 'none',
+                    borderRadius: '16px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-amber"
-                  style={{ flex: 1, justifyContent: 'center' }}
                   disabled={creating}
+                  style={{
+                    flex: 1,
+                    padding: '14px',
+                    background: '#0f172a',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '16px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 10px 20px rgba(15, 23, 42, 0.2)',
+                  }}
                 >
-                  {creating ? 'Creating...' : 'Create project'}
+                  {creating ? 'Creating...' : 'Create Project'}
                 </button>
               </div>
             </form>
