@@ -23,7 +23,7 @@ const ProjectsPage = () => {
     try {
       await createProject(form);
       setSuccessAnim(true);
-      toast.success('Project created successfully!');
+      toast.success('Project initialized successfully!');
       setTimeout(() => {
         setForm({ name: '', description: '' });
         setShowModal(false);
@@ -43,289 +43,414 @@ const ProjectsPage = () => {
     <>
       <style>
         {`
-          @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+          /* Full Viewport Reset */
+          html, body, #root {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100% !important;
+            background-color: #000000 !important;
+            box-sizing: border-box;
           }
-          .proj-shining-btn {
+
+          *, *::before, *::after {
+            box-sizing: inherit;
+          }
+
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+
+          @keyframes btnSheen {
+            0% { left: -120%; }
+            100% { left: 180%; }
+          }
+
+          .projects-container {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+
+          /* Obsidian Card Base */
+          .obsidian-card {
+            background: #09090b;
+            border: 1px solid #1e293b;
+            border-radius: 20px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           }
-          .proj-shining-btn::after {
+
+          .obsidian-card:hover {
+            border-color: #38bdf8;
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px -10px rgba(56, 189, 248, 0.2), 0 0 20px rgba(56, 189, 248, 0.08);
+          }
+
+          /* Sweeping Sheen Primary Button */
+          .btn-cyber-cyan {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+            color: #000000;
+            font-weight: 800;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 18px rgba(56, 189, 248, 0.35);
+            transition: transform 0.18s ease, box-shadow 0.2s ease;
+          }
+
+          .btn-cyber-cyan::after {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
+            left: -120%;
+            width: 80%;
             height: 100%;
-            background: linear-gradient(
-              90deg,
-              transparent,
-              rgba(255, 255, 255, 0.4),
-              transparent
-            );
-            transition: none;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transform: skewX(-20deg);
           }
-          .proj-shining-btn:hover::after {
-            animation: shine 0.75s ease-in-out;
+
+          .btn-cyber-cyan:hover::after {
+            animation: btnSheen 0.75s cubic-bezier(0.16, 1, 0.3, 1);
           }
-          .proj-shining-btn:hover {
+
+          .btn-cyber-cyan:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.45);
+          }
+
+          .btn-cyber-cyan:active {
+            transform: translateY(1px) scale(0.98);
+          }
+
+          /* Input Fields for Modal */
+          .modal-input {
+            width: 100%;
+            padding: 13px 16px;
+            background: #000000;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #ededed;
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+          }
+
+          .modal-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 1px #38bdf8, 0 8px 16px rgba(0, 0, 0, 0.5);
+          }
+
+          .modal-input::placeholder {
+            color: #52525b;
           }
         `}
       </style>
 
       <div style={{
         minHeight: '100vh',
-        background: '#f8fafc',
+        width: '100vw',
+        background: '#000000',
+        backgroundImage: `
+          radial-gradient(circle at 10% 8%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+          radial-gradient(circle at 90% 12%, rgba(245, 158, 11, 0.07) 0%, transparent 45%),
+          radial-gradient(circle at 50% 65%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)
+        `,
+        backgroundSize: '100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px',
         position: 'relative',
         overflowX: 'hidden',
-        color: '#0f172a',
+        color: '#f8fafc',
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', Roboto, sans-serif",
       }}>
-        {/* Subtle Light Ambient Glowing Orbs */}
-        <div style={{
-          position: 'absolute',
-          top: '-10%',
-          left: '-5%',
-          width: '500px',
-          height: '500px',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, rgba(0,0,0,0) 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '-10%',
-          right: '-5%',
-          width: '500px',
-          height: '500px',
-          background: 'radial-gradient(circle, rgba(14, 165, 233, 0.07) 0%, rgba(0,0,0,0) 70%)',
-          pointerEvents: 'none',
-        }} />
-
         <Navbar />
 
-        <main className="wrap" style={{ position: 'relative', zIndex: 1, paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto', paddingLeft: '24px', paddingRight: '24px', paddingTop: '32px' }}>
+        <main className="projects-container" style={{
+          position: 'relative',
+          zIndex: 1,
+          paddingBottom: '80px',
+          maxWidth: '1240px',
+          margin: '0 auto',
+          paddingLeft: '24px',
+          paddingRight: '24px',
+          paddingTop: '32px'
+        }}>
           
-          {/* Page Header Card */}
+          {/* Header Card */}
           <div style={{
-            background: '#ffffff',
+            background: 'linear-gradient(145deg, #09090b 0%, #0c121e 100%)',
             borderRadius: '24px',
-            padding: '32px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)',
+            padding: '32px 36px',
+            border: '1px solid #1e293b',
+            boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.8)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: 32,
+            marginBottom: 36,
             flexWrap: 'wrap',
-            gap: 16,
+            gap: 20,
+            position: 'relative',
+            overflow: 'hidden'
           }}>
+            {/* Top Glowing Trim */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, #38bdf8 0%, #10b981 40%, #f59e0b 75%, #f43f5e 100%)'
+            }} />
+
             <div>
-              <p style={{
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#64748b',
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                marginBottom: '6px',
-                margin: '0 0 4px 0',
-              }}>
-                {projects.length} project{projects.length !== 1 ? 's' : ''} available
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  color: '#38bdf8',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  background: 'rgba(56, 189, 248, 0.12)',
+                  padding: '3px 10px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(56, 189, 248, 0.25)'
+                }}>
+                  {projects.length} {projects.length === 1 ? 'Workspace' : 'Workspaces'}
+                </span>
+                <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#64748b' }} />
+                <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600' }}>Active Sprint Boards</span>
+              </div>
+
               <h1 style={{
-                fontSize: '28px',
-                fontWeight: '800',
-                color: '#0f172a',
+                fontSize: '30px',
+                fontWeight: '900',
+                color: '#ffffff',
                 letterSpacing: '-0.03em',
                 margin: 0,
               }}>
-                Your Projects
+                Your Workspaces
               </h1>
             </div>
 
             <button
               onClick={() => setShowModal(true)}
-              className="proj-shining-btn"
-              style={{
-                padding: '12px 24px',
-                background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '16px',
-                fontSize: '14px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                boxShadow: '0 8px 20px rgba(15, 23, 42, 0.15)',
-              }}
+              className="btn-cyber-cyan"
             >
-              + New Project
+              <span style={{ fontSize: '15px', lineHeight: 1 }}>+</span>
+              <span>New Project</span>
             </button>
           </div>
 
-          {/* Grid Container */}
+          {/* Grid Layout */}
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
-              <div className="spinner" style={{ width: '40px', height: '40px', border: '4px solid #e2e8f0', borderTopColor: '#0f172a', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '100px 0', gap: 16 }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                border: '3px solid #1e293b',
+                borderTopColor: '#38bdf8',
+                borderRadius: '50%',
+                animation: 'spin 0.7s linear infinite'
+              }} />
+              <span style={{ fontSize: '13px', color: '#64748b', fontWeight: '700', letterSpacing: '0.06em' }}>
+                FETCHING WORKSPACES...
+              </span>
             </div>
           ) : projects.length === 0 ? (
             <div style={{
-              background: '#ffffff',
+              background: '#09090b',
               borderRadius: '24px',
-              padding: '60px',
+              padding: '60px 24px',
               textAlign: 'center',
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+              border: '1px solid #1e293b',
+              boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.8)',
             }}>
-              <p style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '13px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 8px 0' }}>
-                No projects yet
+              <div style={{
+                width: 56,
+                height: 56,
+                borderRadius: '16px',
+                background: 'rgba(56, 189, 248, 0.1)',
+                border: '1px solid rgba(56, 189, 248, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 24,
+                margin: '0 auto 16px'
+              }}>
+                📂
+              </div>
+              <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#ededed', margin: '0 0 6px 0' }}>
+                No active projects found
+              </h3>
+              <p style={{ fontSize: '14px', color: '#71717a', margin: '0 0 20px 0', maxWidth: '380px', marginInline: 'auto' }}>
+                Create your first project canvas to organize sprint backlogs and invite contributors.
               </p>
-              <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
-                Create your first project to get started collaborating.
-              </p>
+              <button
+                onClick={() => setShowModal(true)}
+                className="btn-cyber-cyan"
+              >
+                + Create Workspace
+              </button>
             </div>
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
               gap: 20,
             }}>
               {projects.map((project) => {
                 const role = userRole(project);
                 const isAdmin = role === 'admin';
+
                 return (
                   <Link key={project._id} to={`/projects/${project._id}`} style={{ textDecoration: 'none' }}>
-                    <div
-                      style={{
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '24px',
-                        padding: '24px',
-                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)',
-                        cursor: 'pointer',
-                        transition: 'all 0.25s ease',
-                        height: '100%',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        boxSizing: 'border-box',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-4px)';
-                        e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.08)';
-                        e.currentTarget.style.borderColor = '#cbd5e1';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.03)';
-                        e.currentTarget.style.borderColor = '#e2e8f0';
-                      }}
-                    >
-                      {/* Left indicator accent border */}
+                    <div className="obsidian-card" style={{
+                      padding: '24px',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      boxSizing: 'border-box'
+                    }}>
+                      {/* Left Indicator Stripe */}
                       <div style={{
                         position: 'absolute',
                         top: 0,
                         bottom: 0,
                         left: 0,
                         width: 4,
-                        background: isAdmin ? 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)' : '#cbd5e1',
+                        background: isAdmin
+                          ? 'linear-gradient(180deg, #38bdf8 0%, #10b981 100%)'
+                          : '#27272a',
                       }} />
 
-                      <div style={{ paddingLeft: 8 }}>
+                      <div style={{ paddingLeft: 6 }}>
                         <div style={{
                           display: 'flex',
                           alignItems: 'flex-start',
                           justifyContent: 'space-between',
                           gap: 12,
-                          marginBottom: 10,
+                          marginBottom: 12,
                         }}>
                           <h3 style={{
-                            fontSize: '17px',
+                            fontSize: '18px',
                             fontWeight: '800',
-                            color: '#0f172a',
+                            color: '#ffffff',
                             letterSpacing: '-0.02em',
                             margin: 0,
                             lineHeight: '1.4',
                           }}>
                             {project.name}
                           </h3>
+
                           <span style={{
                             fontSize: '10px',
-                            fontWeight: '700',
+                            fontWeight: '800',
                             letterSpacing: '0.08em',
                             textTransform: 'uppercase',
-                            padding: '4px 10px',
+                            padding: '3px 10px',
                             borderRadius: '9999px',
-                            background: isAdmin ? '#eff6ff' : '#f1f5f9',
-                            color: isAdmin ? '#2563eb' : '#64748b',
+                            background: isAdmin ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.05)',
+                            color: isAdmin ? '#38bdf8' : '#a1a1aa',
                             flexShrink: 0,
-                            border: isAdmin ? '1px solid #bfdbfe' : '1px solid #e2e8f0',
+                            border: isAdmin ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid #27272a',
                           }}>
                             {role || 'member'}
                           </span>
                         </div>
 
-                        {project.description && (
+                        {project.description ? (
                           <p style={{
-                            color: '#64748b',
+                            color: '#94a3b8',
                             fontSize: '13px',
                             lineHeight: '1.6',
-                            margin: '0 0 20px 0',
+                            margin: '0 0 24px 0',
                             fontWeight: '500',
                           }}>
-                            {project.description.length > 80
-                              ? project.description.slice(0, 80) + '...'
+                            {project.description.length > 90
+                              ? project.description.slice(0, 90) + '...'
                               : project.description}
                           </p>
+                        ) : (
+                          <p style={{ color: '#52525b', fontSize: '13px', margin: '0 0 24px 0', fontStyle: 'italic' }}>
+                            No description provided.
+                          </p>
                         )}
+                      </div>
 
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          marginTop: project.description ? 0 : 20,
-                          paddingTop: 14,
-                          borderTop: '1px solid #f1f5f9',
-                        }}>
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
-                            {project.members.slice(0, 4).map((m, i) => (
+                      {/* Card Footer */}
+                      <div style={{
+                        paddingLeft: 6,
+                        paddingTop: 14,
+                        borderTop: '1px solid #18181b',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                        {/* Member Stack */}
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          {project.members.slice(0, 4).map((m, i) => {
+                            const avatarPalette = [
+                              'linear-gradient(135deg, #0284c7, #38bdf8)',
+                              'linear-gradient(135deg, #e11d48, #fb7185)',
+                              'linear-gradient(135deg, #d97706, #fbbf24)',
+                              'linear-gradient(135deg, #059669, #34d399)'
+                            ];
+                            const bgGradient = avatarPalette[i % avatarPalette.length];
+
+                            return (
                               <div key={m.user._id} style={{
                                 width: 26,
                                 height: 26,
                                 borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)',
+                                background: bgGradient,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 fontSize: 10,
-                                fontWeight: 700,
+                                fontWeight: 800,
                                 color: '#ffffff',
                                 marginLeft: i > 0 ? -8 : 0,
-                                border: '2px solid #ffffff',
-                                boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                                border: '2px solid #09090b',
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.5)',
                               }}>
                                 {m.user.name[0].toUpperCase()}
                               </div>
-                            ))}
-                            <span style={{
-                              fontSize: '12px',
-                              color: '#64748b',
-                              marginLeft: 10,
-                              fontWeight: '600',
-                            }}>
-                              {project.members.length} member{project.members.length !== 1 ? 's' : ''}
-                            </span>
-                          </div>
-
+                            );
+                          })}
                           <span style={{
                             fontSize: '12px',
-                            color: '#94a3b8',
+                            color: '#71717a',
+                            marginLeft: 10,
                             fontWeight: '600',
                           }}>
-                            {format(new Date(project.createdAt), 'MMM d, yyyy')}
+                            {project.members.length} {project.members.length === 1 ? 'member' : 'members'}
                           </span>
                         </div>
+
+                        {/* Date Created */}
+                        <span style={{
+                          fontSize: '11px',
+                          color: '#64748b',
+                          fontWeight: '600',
+                        }}>
+                          {format(new Date(project.createdAt), 'MMM d, yyyy')}
+                        </span>
                       </div>
                     </div>
                   </Link>
@@ -335,16 +460,16 @@ const ProjectsPage = () => {
           )}
         </main>
 
-        {/* Create Modal */}
+        {/* Create Project Modal */}
         {showModal && (
           <div
             onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(15, 23, 42, 0.45)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
+              background: 'rgba(0, 0, 0, 0.75)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -355,90 +480,89 @@ const ProjectsPage = () => {
             <div style={{
               width: '100%',
               maxWidth: '460px',
-              background: '#ffffff',
-              borderRadius: '28px',
+              background: '#09090b',
+              borderRadius: '24px',
               padding: '36px',
-              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
-              border: '1px solid #e2e8f0',
+              boxShadow: '0 30px 60px -15px rgba(0, 0, 0, 0.95), 0 0 1px 1px rgba(255, 255, 255, 0.05)',
+              border: '1px solid #1e293b',
               boxSizing: 'border-box',
+              position: 'relative'
             }}>
+              {/* Top Modal Trim */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '2px',
+                background: 'linear-gradient(90deg, #38bdf8 0%, #10b981 100%)'
+              }} />
+
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 marginBottom: '24px',
               }}>
-                <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
-                  Create New Project
-                </h2>
+                <div>
+                  <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#ffffff', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
+                    Create Workspace
+                  </h2>
+                  <p style={{ fontSize: '13px', color: '#71717a', margin: 0 }}>
+                    Initialize a new Kanban task repository.
+                  </p>
+                </div>
+
                 <button
                   onClick={() => setShowModal(false)}
                   style={{
-                    background: '#f1f5f9',
-                    border: 'none',
+                    background: '#18181b',
+                    border: '1px solid #27272a',
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
-                    fontSize: '16px',
+                    fontSize: '14px',
                     fontWeight: '700',
-                    color: '#64748b',
+                    color: '#a1a1aa',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    transition: 'all 0.2s ease'
                   }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.borderColor = '#52525b'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = '#a1a1aa'; e.currentTarget.style.borderColor = '#27272a'; }}
                 >
-                  ×
+                  ✕
                 </button>
               </div>
 
               <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#475569', marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a', marginBottom: '8px' }}>
                     Project Name *
                   </label>
                   <input
                     value={form.name}
                     onChange={set('name')}
-                    placeholder="e.g. Remote Team Collaboration Hub"
+                    placeholder="e.g. Core Infrastructure Sprint"
                     required
                     autoFocus
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      backgroundColor: '#f8fafc',
-                      border: '1px solid #cbd5e1',
-                      borderRadius: '16px',
-                      fontSize: '14px',
-                      color: '#0f172a',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                    }}
+                    className="modal-input"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#475569', marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a', marginBottom: '8px' }}>
                     Description
                   </label>
                   <textarea
                     value={form.description}
                     onChange={set('description')}
-                    placeholder="Streamline internal workflows and manage weekly goals..."
+                    placeholder="Define goals, milestones, and deliverable scopes..."
                     rows={3}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      backgroundColor: '#f8fafc',
-                      border: '1px solid #cbd5e1',
-                      borderRadius: '16px',
-                      fontSize: '14px',
-                      color: '#0f172a',
-                      outline: 'none',
-                      resize: 'vertical',
-                      boxSizing: 'border-box',
-                      fontFamily: 'inherit',
-                    }}
+                    className="modal-input"
+                    style={{ resize: 'vertical', fontFamily: 'inherit' }}
                   />
                 </div>
 
@@ -448,37 +572,33 @@ const ProjectsPage = () => {
                     onClick={() => setShowModal(false)}
                     style={{
                       flex: 1,
-                      padding: '14px',
-                      background: '#f1f5f9',
-                      color: '#475569',
-                      border: 'none',
-                      borderRadius: '16px',
-                      fontSize: '14px',
+                      padding: '13px',
+                      background: '#121215',
+                      color: '#a1a1aa',
+                      border: '1px solid #27272a',
+                      borderRadius: '12px',
+                      fontSize: '13px',
                       fontWeight: '700',
                       cursor: 'pointer',
+                      transition: 'all 0.2s ease'
                     }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.borderColor = '#3f3f46'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = '#a1a1aa'; e.currentTarget.style.borderColor = '#27272a'; }}
                   >
                     Cancel
                   </button>
+
                   <button
                     type="submit"
                     disabled={creating}
-                    className="proj-shining-btn"
+                    className="btn-cyber-cyan"
                     style={{
                       flex: 1,
-                      padding: '14px',
-                      background: successAnim ? '#10b981' : '#0f172a',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '16px',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: '0 10px 20px rgba(15, 23, 42, 0.2)',
-                      transition: 'background 0.3s ease',
+                      padding: '13px',
+                      background: successAnim ? '#10b981' : undefined
                     }}
                   >
-                    {successAnim ? '✓ Created!' : creating ? 'Creating...' : 'Create Project'}
+                    {successAnim ? '✓ Created' : creating ? 'Initializing...' : 'Create Project'}
                   </button>
                 </div>
               </form>

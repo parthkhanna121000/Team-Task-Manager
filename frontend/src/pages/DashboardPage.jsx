@@ -15,106 +15,189 @@ const DashboardPage = () => {
     <>
       <style>
         {`
+          /* Full Viewport Reset */
+          html, body, #root {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-height: 100% !important;
+            background-color: #000000 !important;
+            box-sizing: border-box;
+          }
+
+          *, *::before, *::after {
+            box-sizing: inherit;
+          }
+
           @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
           }
+
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+
           .dashboard-container {
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+
+          /* Obsidian Card Bases */
+          .obsidian-card {
+            background: #09090b;
+            border: 1px solid #1e293b;
+            border-radius: 20px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+          }
+
+          .obsidian-card:hover {
+            transform: translateY(-3px);
+          }
+
+          /* Neon Glow Hover Accents */
+          .glow-pink:hover {
+            border-color: rgba(244, 63, 94, 0.5);
+            box-shadow: 0 12px 32px -10px rgba(244, 63, 94, 0.25);
+          }
+
+          .glow-blue:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 12px 32px -10px rgba(56, 189, 248, 0.25);
+          }
+
+          .glow-yellow:hover {
+            border-color: rgba(245, 158, 11, 0.5);
+            box-shadow: 0 12px 32px -10px rgba(245, 158, 11, 0.25);
+          }
+
+          .glow-green:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 12px 32px -10px rgba(16, 185, 129, 0.25);
+          }
+
+          /* Interactive Back Button */
+          .btn-back-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: #09090b;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-decoration: none;
+            border: 1px solid #1e293b;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+
+          .btn-back-nav:hover {
+            border-color: #38bdf8;
+            color: #ffffff;
+            transform: translateX(-3px);
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.2);
+          }
+
+          /* Member Row Hover Transition */
+          .member-row {
+            background: #09090b;
+            border: 1px solid #1e293b;
+            border-radius: 18px;
+            padding: 18px 24px;
+            transition: all 0.2s ease;
+          }
+
+          .member-row:hover {
+            border-color: #334155;
+            background: #0d121c;
+            transform: translateX(3px);
           }
         `}
       </style>
 
       <div style={{
         minHeight: '100vh',
-        background: '#f8fafc',
+        width: '100vw',
+        background: '#000000',
+        backgroundImage: `
+          radial-gradient(circle at 10% 8%, rgba(244, 63, 94, 0.08) 0%, transparent 40%),
+          radial-gradient(circle at 85% 12%, rgba(56, 189, 248, 0.09) 0%, transparent 45%),
+          radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px)
+        `,
+        backgroundSize: '100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px',
         position: 'relative',
         overflowX: 'hidden',
-        color: '#0f172a',
+        color: '#f8fafc',
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', Roboto, sans-serif",
       }}>
-        {/* Subtle Ambient Background Orbs */}
-        <div style={{
-          position: 'absolute',
-          top: '-10%',
-          left: '-5%',
-          width: '500px',
-          height: '500px',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, rgba(0,0,0,0) 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '-10%',
-          right: '-5%',
-          width: '500px',
-          height: '500px',
-          background: 'radial-gradient(circle, rgba(14, 165, 233, 0.06) 0%, rgba(0,0,0,0) 70%)',
-          pointerEvents: 'none',
-        }} />
-
         <Navbar />
 
-        <main className="wrap dashboard-container" style={{ position: 'relative', zIndex: 1, paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto', paddingLeft: '24px', paddingRight: '24px', paddingTop: '32px' }}>
+        <main className="wrap dashboard-container" style={{
+          position: 'relative',
+          zIndex: 1,
+          paddingBottom: '80px',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          paddingLeft: '24px',
+          paddingRight: '24px',
+          paddingTop: '32px'
+        }}>
           
           {/* Breadcrumb Navigation Pill */}
           <div style={{ marginBottom: 24 }}>
-            <Link
-              to={`/projects/${projectId}`}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 16px',
-                background: '#ffffff',
-                borderRadius: '9999px',
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#475569',
-                textDecoration: 'none',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#cbd5e1';
-                e.currentTarget.style.color = '#0f172a';
-                e.currentTarget.style.transform = 'translateX(-2px)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#e2e8f0';
-                e.currentTarget.style.color = '#475569';
-                e.currentTarget.style.transform = 'translateX(0)';
-              }}
-            >
-              ← Back to Board
+            <Link to={`/projects/${projectId}`} className="btn-back-nav">
+              <span style={{ fontSize: '14px', lineHeight: 1 }}>←</span>
+              <span>Back to Kanban Board</span>
             </Link>
           </div>
 
-          {/* Clean Header Card */}
+          {/* Obsidian Header Card with Neon Multi-Color Border Accent */}
           <div style={{
-            background: '#ffffff',
+            background: 'linear-gradient(145deg, #09090b 0%, #0c121e 100%)',
             borderRadius: '24px',
-            padding: '32px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)',
-            marginBottom: 32,
+            padding: '36px',
+            border: '1px solid #1e293b',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.05)',
+            marginBottom: 36,
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            <p style={{
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              fontSize: '11px',
-              fontWeight: '700',
-              color: '#64748b',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              marginBottom: '6px',
-              margin: '0 0 4px 0',
-            }}>
-              {project?.name || 'Project Overview'}
-            </p>
+            {/* Top Glowing Trim */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, #f43f5e 0%, #38bdf8 35%, #f59e0b 70%, #10b981 100%)'
+            }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: '800',
+                color: '#38bdf8',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                background: 'rgba(56, 189, 248, 0.1)',
+                padding: '3px 10px',
+                borderRadius: '6px',
+                border: '1px solid rgba(56, 189, 248, 0.2)'
+              }}>
+                {project?.name || 'Project Telemetry'}
+              </span>
+              <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#64748b' }} />
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600' }}>Live Performance Feed</span>
+            </div>
+
             <h1 style={{
-              fontSize: '28px',
-              fontWeight: '800',
-              color: '#0f172a',
+              fontSize: '32px',
+              fontWeight: '900',
+              color: '#ffffff',
               letterSpacing: '-0.03em',
               margin: 0,
             }}>
@@ -123,122 +206,169 @@ const DashboardPage = () => {
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
-              <div className="spinner" style={{ width: '40px', height: '40px', border: '4px solid #e2e8f0', borderTopColor: '#0f172a', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '100px 0', gap: 16 }}>
+              <div style={{
+                width: '42px',
+                height: '42px',
+                border: '3px solid #1e293b',
+                borderTopColor: '#38bdf8',
+                borderRadius: '50%',
+                animation: 'spin 0.7s linear infinite'
+              }} />
+              <span style={{ fontSize: '13px', color: '#64748b', fontWeight: '600', letterSpacing: '0.04em' }}>
+                AGGREGATING SPRINT STATS...
+              </span>
             </div>
           ) : stats ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
 
-              {/* Overview stats */}
+              {/* 1. Overview Metric Stats */}
               <section>
                 <div style={{
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
                   fontSize: '12px',
-                  fontWeight: '700',
-                  color: '#64748b',
+                  fontWeight: '800',
+                  color: '#94a3b8',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
-                  marginBottom: '14px',
-                  paddingLeft: '4px',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
                 }}>
-                  Overview Metrics
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#38bdf8' }} />
+                  <span>Overview Metrics</span>
                 </div>
-                <div className="stats-grid" style={{
+
+                <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                  gap: 16,
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+                  gap: 18,
                 }}>
-                  <div style={cleanCardStyle}>
-                    <StatCard label="Total Tasks" value={stats.total} accent="#0f172a" />
+                  {/* Total Tasks - Clean Silver/White */}
+                  <div className="obsidian-card glow-blue" style={{ padding: '22px' }}>
+                    <StatCard label="Total Tasks" value={stats.total} accent="#f8fafc" />
                   </div>
-                  <div style={cleanCardStyle}>
-                    <StatCard label="To Do" value={stats.byStatus.todo} sub={pct(stats.byStatus.todo, stats.total)} accent="#64748b" />
-                  </div>
-                  <div style={cleanCardStyle}>
-                    <StatCard label="In Progress" value={stats.byStatus.in_progress} sub={pct(stats.byStatus.in_progress, stats.total)} accent="#0ea5e9" />
-                  </div>
-                  <div style={cleanCardStyle}>
-                    <StatCard label="Completed" value={stats.byStatus.done} sub={pct(stats.byStatus.done, stats.total)} accent="#10b981" />
-                  </div>
-                </div>
-              </section>
 
-              {/* Overdue Section */}
-              <section>
-                <div style={{
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  color: '#64748b',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  marginBottom: '14px',
-                  paddingLeft: '4px',
-                }}>
-                  Attention Required
-                </div>
-                <div style={{ maxWidth: '280px' }}>
-                  <div style={cleanCardStyle}>
-                    <StatCard
-                      label="Overdue Tasks"
-                      value={stats.overdue}
-                      sub={stats.overdue > 0 ? 'needs immediate attention' : 'all items on track'}
-                      accent={stats.overdue > 0 ? '#ef4444' : '#10b981'}
+                  {/* To Do - Amber/Yellow */}
+                  <div className="obsidian-card glow-yellow" style={{ padding: '22px' }}>
+                    <StatCard 
+                      label="To Do" 
+                      value={stats.byStatus.todo} 
+                      sub={pct(stats.byStatus.todo, stats.total)} 
+                      accent="#f59e0b" 
+                    />
+                  </div>
+
+                  {/* In Progress - Electric Cyan/Blue */}
+                  <div className="obsidian-card glow-blue" style={{ padding: '22px' }}>
+                    <StatCard 
+                      label="In Progress" 
+                      value={stats.byStatus.in_progress} 
+                      sub={pct(stats.byStatus.in_progress, stats.total)} 
+                      accent="#38bdf8" 
+                    />
+                  </div>
+
+                  {/* Completed - Neon Emerald/Green */}
+                  <div className="obsidian-card glow-green" style={{ padding: '22px' }}>
+                    <StatCard 
+                      label="Completed" 
+                      value={stats.byStatus.done} 
+                      sub={pct(stats.byStatus.done, stats.total)} 
+                      accent="#10b981" 
                     />
                   </div>
                 </div>
               </section>
 
-              {/* Per-member breakdown */}
+              {/* 2. Overdue Section - Neon Pink Alert */}
+              <section>
+                <div style={{
+                  fontSize: '12px',
+                  fontWeight: '800',
+                  color: '#94a3b8',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f43f5e' }} />
+                  <span>Attention Required</span>
+                </div>
+
+                <div style={{ maxWidth: '340px' }}>
+                  <div className={`obsidian-card ${stats.overdue > 0 ? 'glow-pink' : 'glow-green'}`} style={{
+                    padding: '22px',
+                    borderColor: stats.overdue > 0 ? 'rgba(244, 63, 94, 0.4)' : '#1e293b'
+                  }}>
+                    <StatCard
+                      label="Overdue Tasks"
+                      value={stats.overdue}
+                      sub={stats.overdue > 0 ? 'Bottleneck: Immediate action required' : 'All sprint deliverables on schedule'}
+                      accent={stats.overdue > 0 ? '#f43f5e' : '#10b981'}
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* 3. Per-Member Performance Breakdown */}
               {stats.byUser.length > 0 && (
                 <section>
                   <div style={{
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
                     fontSize: '12px',
-                    fontWeight: '700',
-                    color: '#64748b',
+                    fontWeight: '800',
+                    color: '#94a3b8',
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
-                    marginBottom: '14px',
-                    paddingLeft: '4px',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
                   }}>
-                    Performance By Member
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981' }} />
+                    <span>Performance by Member</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {stats.byUser.map((entry) => {
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {stats.byUser.map((entry, idx) => {
                       const percent = entry.count > 0
                         ? Math.round((entry.done / entry.count) * 100)
                         : 0;
+
+                      // Cohesive alternating palette for avatars & tracks
+                      const palette = [
+                        { color: '#38bdf8', bg: 'linear-gradient(135deg, #0284c7, #38bdf8)' },
+                        { color: '#f43f5e', bg: 'linear-gradient(135deg, #e11d48, #fb7185)' },
+                        { color: '#f59e0b', bg: 'linear-gradient(135deg, #d97706, #fbbf24)' },
+                        { color: '#10b981', bg: 'linear-gradient(135deg, #059669, #34d399)' }
+                      ];
+                      const theme = palette[idx % palette.length];
+
                       return (
-                        <div
-                          key={entry._id}
-                          style={{
-                            background: '#ffffff',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '20px',
-                            padding: '18px 24px',
-                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.03)',
-                            transition: 'all 0.2s ease',
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <div key={entry._id} className="member-row">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+                            {/* Member Avatar */}
                             <div style={{
-                              width: 38,
-                              height: 38,
-                              borderRadius: '50%',
-                              background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)',
+                              width: 40,
+                              height: 40,
+                              borderRadius: '12px',
+                              background: theme.bg,
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              fontSize: 13,
-                              fontWeight: 700,
+                              fontSize: 14,
+                              fontWeight: 800,
                               color: '#ffffff',
                               flexShrink: 0,
-                              boxShadow: '0 4px 10px rgba(14, 165, 233, 0.2)',
+                              boxShadow: `0 4px 14px ${theme.color}33`,
+                              border: '1px solid rgba(255, 255, 255, 0.15)'
                             }}>
                               {entry.name[0].toUpperCase()}
                             </div>
 
+                            {/* Info & Progress Bar */}
                             <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{
                                 display: 'flex',
@@ -246,22 +376,25 @@ const DashboardPage = () => {
                                 alignItems: 'baseline',
                                 marginBottom: 8,
                               }}>
-                                <span style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a' }}>{entry.name}</span>
+                                <span style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc' }}>
+                                  {entry.name}
+                                </span>
                                 <span style={{
                                   fontSize: '12px',
                                   fontWeight: '600',
-                                  color: '#64748b',
+                                  color: '#94a3b8',
                                 }}>
-                                  {entry.done} / {entry.count} completed
+                                  <strong style={{ color: '#ffffff' }}>{entry.done}</strong> / {entry.count} closed
                                 </span>
                               </div>
 
-                              {/* Progress track */}
+                              {/* Progress Track */}
                               <div style={{
                                 height: 6,
-                                background: '#f1f5f9',
-                                borderRadius: 3,
+                                background: '#18181b',
+                                borderRadius: 999,
                                 overflow: 'hidden',
+                                border: '1px solid #27272a'
                               }}>
                                 <div style={{
                                   height: '100%',
@@ -269,20 +402,25 @@ const DashboardPage = () => {
                                   background: percent === 100
                                     ? '#10b981'
                                     : percent > 50
-                                    ? '#0ea5e9'
-                                    : '#6366f1',
-                                  borderRadius: 3,
-                                  transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    ? 'linear-gradient(90deg, #38bdf8, #10b981)'
+                                    : percent > 25
+                                    ? 'linear-gradient(90deg, #f59e0b, #38bdf8)'
+                                    : 'linear-gradient(90deg, #f43f5e, #f59e0b)',
+                                  borderRadius: 999,
+                                  boxShadow: `0 0 10px ${theme.color}40`,
+                                  transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
                                 }} />
                               </div>
                             </div>
 
+                            {/* Percentage Tag */}
                             <span style={{
-                              fontSize: '15px',
+                              fontSize: '14px',
                               fontWeight: '800',
-                              color: percent === 100 ? '#10b981' : '#0f172a',
-                              minWidth: 48,
+                              color: percent === 100 ? '#10b981' : theme.color,
+                              minWidth: 54,
                               textAlign: 'right',
+                              fontVariantNumeric: 'tabular-nums'
                             }}>
                               {percent}%
                             </span>
@@ -294,43 +432,26 @@ const DashboardPage = () => {
                 </section>
               )}
 
+              {/* Empty Members State */}
               {stats.byUser.length === 0 && (
-                <div style={{
-                  background: '#ffffff',
-                  borderRadius: '24px',
-                  padding: '40px',
-                  textAlign: 'center',
-                  border: '1px solid #e2e8f0',
-                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
-                }}>
-                  <p style={{ color: '#64748b', fontSize: '14px', fontWeight: '500', margin: 0 }}>No tasks assigned to team members yet.</p>
+                <div className="obsidian-card" style={{ padding: '48px 24px', textAlign: 'center' }}>
+                  <p style={{ color: '#64748b', fontSize: '14px', fontWeight: '600', margin: 0 }}>
+                    No tasks assigned to team members yet.
+                  </p>
                 </div>
               )}
             </div>
           ) : (
-            <div style={{
-              background: '#ffffff',
-              borderRadius: '24px',
-              padding: '40px',
-              textAlign: 'center',
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
-            }}>
-              <p style={{ color: '#64748b', fontSize: '14px', fontWeight: '500', margin: 0 }}>No statistical data available for this project.</p>
+            <div className="obsidian-card" style={{ padding: '48px 24px', textAlign: 'center' }}>
+              <p style={{ color: '#64748b', fontSize: '14px', fontWeight: '600', margin: 0 }}>
+                No statistical data available for this project.
+              </p>
             </div>
           )}
         </main>
       </div>
     </>
   );
-};
-
-const cleanCardStyle = {
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: '20px',
-  padding: '20px',
-  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
 };
 
 const pct = (val, total) =>
